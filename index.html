@@ -211,9 +211,10 @@
       <h2>Request a Tour</h2>
       <div class="sub">Tell us a bit about yourself and Avigail will be in touch to set up a time.</div>
 
-      <form id="tourForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <form id="tourForm" action="https://formspree.io/f/mpqvroqr" method="POST">
         <input type="hidden" name="property" value="6240 Miramar Pkwy, Miramar, FL 33023">
-        <input type="hidden" name="_subject" value="🔥 New Tour Request — 6240 Miramar Pkwy">
+        <input type="hidden" name="broker" value="Avigail Gayer">
+        <input type="hidden" name="_subject" value="🔥 New Tour Request — 6240 Miramar Pkwy (Avigail Gayer)">
 
         <div>
           <label for="name">Full Name</label>
@@ -234,6 +235,9 @@
         <button type="submit">Request a Tour</button>
       </form>
 
+      <p id="tourSuccess" style="display:none; color:var(--white); font-size:15px; line-height:1.5;">Thank you — your request has been sent. Avigail will be in touch shortly.</p>
+      <p id="tourError" style="display:none; color:#E0A0A8; font-size:14px; line-height:1.5;">Something went wrong. Please call Avigail directly at 347.359.0371.</p>
+
       <div class="broker">
         <img class="broker-avatar-img" src="data:image/jpeg;base64,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" alt="Avigail Gayer">
         <div>
@@ -250,6 +254,35 @@
     Fausto Commercial · 1761 W Flagler St, Miami, FL 33135 · FaustoCommercial.com<br>
     All information is deemed reliable but not guaranteed. Buyers are advised to independently verify all information.
   </footer>
+
+  <script>
+    (function () {
+      var form = document.getElementById('tourForm');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = form.querySelector('button');
+        var original = btn.textContent;
+        btn.disabled = true; btn.textContent = 'Sending…';
+        fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        }).then(function (res) {
+          if (res.ok) {
+            form.style.display = 'none';
+            document.getElementById('tourSuccess').style.display = 'block';
+          } else {
+            document.getElementById('tourError').style.display = 'block';
+            btn.disabled = false; btn.textContent = original;
+          }
+        }).catch(function () {
+          document.getElementById('tourError').style.display = 'block';
+          btn.disabled = false; btn.textContent = original;
+        });
+      });
+    })();
+  </script>
 
 </body>
 </html>
