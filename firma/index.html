@@ -319,27 +319,55 @@ const CONFIG = {
   assetBase : "https://tours.faustocommercial.com/firma/assets/",
 
   // Trackable links (Short.io + UTM) so signature traffic is attributable.
-  webUrl    : "https://go.faustocommercial.com/web",
-  linkedin  : "https://go.faustocommercial.com/li",
-  instagram : "https://go.faustocommercial.com/ig",
+  webUrl    : "https://go.faustocommercial.com/FCRCE",
+  linkedin  : "https://go.faustocommercial.com/fc-linkedin",
+  instagram : "https://go.faustocommercial.com/Ig",
 
-  // Registered brokerage name — VERIFY against the DBPR registration.
-  // Florida rule 61J2-10.025 requires this next to the contact block.
+  // ####  VERIFICAR  ####  Nombre licenciado ante DBPR.
+  // Regla FREC 61J2-10.025: debe ir pegado al bloque de contacto.
   brokerage : "Fausto Commercial Real Estate Services",
   address   : "1761 W Flagler St, Miami, FL 33135"
 };
 
-/* ============================================================
-   ROSTER — replace this array with the cleaned Entra ID export.
-   Empty strings are handled gracefully: the line is skipped and
-   the page flags it so the person reports it.
-   ============================================================ */
-const ROSTER = [
-  { name:"Cesar Madrid",           title:"Director of Marketing & RevOps", email:"cm@faustocommercial.com",  direct:"", mobile:"", license:"" },
-  { name:"Carlos Fausto Miranda",  title:"Founder | Principal",            email:"cfm@faustocommercial.com", direct:"305.431.2258", mobile:"", license:"" },
-  { name:"Cristina Amaro",         title:"Marketing Coordinator",          email:"ca@faustocommercial.com",  direct:"", mobile:"", license:"" },
-  { name:"Avigail Gayer",          title:"Commercial Broker",              email:"aig@faustocommercial.com", direct:"", mobile:"", license:"" }
-];
+/* ==============================================================
+   ROSTER — se carga desde roster.csv (mismo folder).
+   Para actualizar: reemplazar roster.csv en GitHub. NO se toca
+   este archivo nunca mas.
+
+   Columnas exactas (primera fila del CSV):
+   name,title,email,direct,mobile,license
+
+   Campos vacios no rompen nada: la linea se omite y la pagina
+   avisa a la persona para que reporte el dato faltante.
+   ============================================================== */
+let ROSTER = [];
+
+function parseCSV(text){
+  const rows = [];
+  let row = [], cell = "", q = false;
+  text = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(q){
+      if(c === '"'){ if(text[i+1] === '"'){ cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if(c === '"') q = true;
+      else if(c === ","){ row.push(cell); cell = ""; }
+      else if(c === "\n"){ row.push(cell); rows.push(row); row = []; cell = ""; }
+      else cell += c;
+  }
+  if(cell.length || row.length){ row.push(cell); rows.push(row); }
+  if(!rows.length) return [];
+  const head = rows.shift().map(h => h.trim().toLowerCase());
+  return rows
+    .filter(r => r.some(v => v && v.trim()))
+    .map(r => {
+      const o = {};
+      head.forEach((h, i) => o[h] = (r[i] || "").trim());
+      return o;
+    })
+    .filter(o => o.name);
+}
 
 /* ============================================================
    SIGNATURE TEMPLATE
@@ -368,11 +396,11 @@ function buildSignature(p){
 
   return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
 <tr>
-<td style="vertical-align:top;padding:0 20px 0 0;">
-<img src="${CONFIG.assetBase}fausto-logo.png" width="150" height="65" alt="Fausto Commercial" style="display:block;border:0;outline:none;">
-<img src="${CONFIG.assetBase}inc5000.png" width="52" height="52" alt="Inc. 5000 - America's Fastest-Growing Private Companies" style="display:block;border:0;outline:none;margin-top:14px;">
+<td style="vertical-align:top;padding:0 16px 0 0;">
+<img src="${CONFIG.assetBase}fausto-logo.png" width="132" height="57" alt="Fausto Commercial" style="display:block;border:0;outline:none;">
+<img src="${CONFIG.assetBase}inc5000.png" width="64" height="64" alt="Inc. 5000 - America's Fastest-Growing Private Companies" style="display:block;border:0;outline:none;margin-top:12px;">
 </td>
-<td style="vertical-align:top;border-left:2px solid #C61F2D;padding:2px 0 0 20px;">
+<td style="vertical-align:top;border-left:2px solid #C61F2D;padding:2px 0 0 16px;">
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:#000000;line-height:20px;">${p.name}</div>
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#C61F2D;letter-spacing:1px;line-height:15px;padding-top:3px;">${(p.title||"").toUpperCase()}</div>
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#000000;line-height:16px;padding-top:9px;">${CONFIG.brokerage}</div>
@@ -396,11 +424,25 @@ const sel = $("who"), stage = $("stage"), flag = $("flag");
 const btnCopy = $("copy"), btnCode = $("copycode"), toast = $("toast");
 let current = null;
 
-ROSTER.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
-  const o = document.createElement("option");
-  o.value = p.name; o.textContent = p.name;
-  sel.appendChild(o);
-});
+(async function loadRoster(){
+  try{
+    const res = await fetch("roster.csv?cb=" + Date.now());
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    ROSTER = parseCSV(await res.text());
+    if(!ROSTER.length) throw new Error("roster.csv is empty");
+    ROSTER.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
+      const o = document.createElement("option");
+      o.value = p.name; o.textContent = p.name;
+      sel.appendChild(o);
+    });
+  }catch(err){
+    sel.disabled = true;
+    sel.innerHTML = '<option>Directory unavailable</option>';
+    document.getElementById("alarmDetail").innerHTML =
+      ` Couldn't load the staff directory (<code>roster.csv</code>) — ${err.message}.`;
+    document.getElementById("alarm").classList.add("show");
+  }
+})();
 
 sel.addEventListener("change", () => {
   const p = ROSTER.find(x => x.name === sel.value);
