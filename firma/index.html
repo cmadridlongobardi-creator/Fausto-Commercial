@@ -386,9 +386,15 @@ function buildSignature(p){
     ? `<span style="color:#9AA0A8;">${label}</span>&nbsp;${href ? A(href, value) : value}<br>`
     : "";
 
+  // Numeros que ya vienen con codigo de pais (+58...) se respetan tal cual.
+  // Los demas se asumen US y se les antepone +1.
+  const tel = v => v.trim().startsWith("+")
+    ? "tel:" + v.replace(/[^\d+]/g, "")
+    : "tel:+1" + v.replace(/\D/g, "");
+
   const contact =
-      line("D", p.direct, p.direct ? "tel:+1"+p.direct.replace(/\D/g,"") : null)
-    + line("M", p.mobile, p.mobile ? "tel:+1"+p.mobile.replace(/\D/g,"") : null)
+      line("D", p.direct, p.direct ? tel(p.direct) : null)
+    + line("M", p.mobile, p.mobile ? tel(p.mobile) : null)
     + line("E", p.email,  p.email  ? "mailto:"+p.email : null);
 
   const license = p.license
