@@ -228,7 +228,7 @@
   </header>
 
   <div class="alarm" id="alarm" role="alert">
-    <strong>Signature images aren't loading.</strong>
+    <strong id="alarmTitle">Something isn't loading.</strong>
     <span id="alarmDetail"></span>
     Don't install the signature yet — email <a href="mailto:marketing@faustocommercial.com">marketing@faustocommercial.com</a> and we'll fix it.
   </div>
@@ -432,7 +432,7 @@ let current = null;
 
 (async function loadRoster(){
   try{
-    const res = await fetch("roster.csv?cb=" + Date.now());
+    const res = await fetch("/firma/roster.csv?cb=" + Date.now());
     if(!res.ok) throw new Error("HTTP " + res.status);
     ROSTER = parseCSV(await res.text());
     if(!ROSTER.length) throw new Error("roster.csv is empty");
@@ -444,8 +444,9 @@ let current = null;
   }catch(err){
     sel.disabled = true;
     sel.innerHTML = '<option>Directory unavailable</option>';
+    document.getElementById("alarmTitle").textContent = "The staff directory isn't loading.";
     document.getElementById("alarmDetail").innerHTML =
-      ` Couldn't load the staff directory (<code>roster.csv</code>) — ${err.message}.`;
+      ` Couldn't load <code>roster.csv</code> — ${err.message}.`;
     document.getElementById("alarm").classList.add("show");
   }
 })();
@@ -525,6 +526,7 @@ btnCode.addEventListener("click", async () => {
   });
   function verdict(){
     if(!bad.length) return;
+    document.getElementById("alarmTitle").textContent = "Signature images aren't loading.";
     document.getElementById("alarmDetail").innerHTML =
       ` Couldn't load <code>${bad.join("</code>, <code>")}</code> from <code>${CONFIG.assetBase}</code>.`;
     document.getElementById("alarm").classList.add("show");
