@@ -323,6 +323,9 @@ const CONFIG = {
   linkedin  : "https://go.faustocommercial.com/fc-linkedin",
   instagram : "https://go.faustocommercial.com/Ig",
 
+  // Fundacion Elena A. Miranda
+  foundation: "https://go.faustocommercial.com/miranda-home",
+
   // ####  VERIFICAR  ####  Nombre licenciado ante DBPR.
   // Regla FREC 61J2-10.025: debe ir pegado al bloque de contacto.
   brokerage : "Fausto Commercial Real Estate Services",
@@ -402,11 +405,12 @@ function buildSignature(p){
 
   return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
 <tr>
-<td style="vertical-align:top;padding:0 16px 0 0;">
-<img src="${CONFIG.assetBase}fausto-logo.png" width="132" height="57" alt="Fausto Commercial" style="display:block;border:0;outline:none;">
-<img src="${CONFIG.assetBase}inc5000.png" width="64" height="64" alt="Inc. 5000 - America's Fastest-Growing Private Companies" style="display:block;border:0;outline:none;margin-top:12px;">
+<td align="center" valign="top" width="164" style="width:164px;padding:0 16px 0 0;text-align:center;">
+<img src="${CONFIG.assetBase}fausto-logo.png" width="132" height="57" alt="Fausto Commercial" style="border:0;outline:none;">
+<br>
+<img src="${CONFIG.assetBase}inc5000.png" width="64" height="64" alt="Inc. 5000 - America's Fastest-Growing Private Companies" style="border:0;outline:none;margin-top:12px;">
 </td>
-<td style="vertical-align:top;border-left:2px solid #C61F2D;padding:2px 0 0 16px;">
+<td valign="top" style="border-left:2px solid #C61F2D;padding:2px 0 0 16px;">
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:#000000;line-height:20px;">${p.name}</div>
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#C61F2D;letter-spacing:1px;line-height:15px;padding-top:3px;">${(p.title||"").toUpperCase()}</div>
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#000000;line-height:16px;padding-top:9px;">${CONFIG.brokerage}</div>
@@ -414,9 +418,20 @@ function buildSignature(p){
 ${contact}${CONFIG.address}
 </div>
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;padding-top:8px;">
-${A(CONFIG.webUrl,"faustocommercial.com")}<span style="color:#C9CDD4;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>${A(CONFIG.linkedin,"LinkedIn")}<span style="color:#C9CDD4;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>${A(CONFIG.instagram,"Instagram")}
+${A(CONFIG.webUrl,"faustocommercial.com")}
+</div>
+<div style="padding-top:9px;line-height:0;">
+<a href="${CONFIG.linkedin}" style="text-decoration:none;"><img src="${CONFIG.assetBase}ic-linkedin.png" width="24" height="24" alt="LinkedIn" style="border:0;outline:none;"></a>&nbsp;&nbsp;<a href="${CONFIG.instagram}" style="text-decoration:none;"><img src="${CONFIG.assetBase}ic-instagram.png" width="24" height="24" alt="Instagram" style="border:0;outline:none;"></a>
 </div>
 ${license}
+</td>
+</tr>
+<tr>
+<td colspan="2" style="padding:14px 0 0 0;">
+<div style="border-top:1px solid #D4D8DE;padding-top:10px;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#6B7280;line-height:15px;">
+<span style="font-weight:bold;color:#333333;">Proud supporter of the Elena A. Miranda Foundation</span>, a 509(a)(1) public charity.<br>
+<span style="font-style:italic;">"Dedicated to saving the lives of children."</span> <a href="${CONFIG.foundation}" style="color:#6B7280;text-decoration:underline;">Click to learn more, participate, or donate.</a>
+</div>
 </td>
 </tr>
 </table>`;
@@ -516,7 +531,7 @@ btnCode.addEventListener("click", async () => {
    wrong or the upload never happened, the images fail silently and
    people install a broken signature. Check on load and say so loudly. */
 (function checkAssets(){
-  const files = ["fausto-logo.png","inc5000.png"];
+  const files = ["fausto-logo.png","inc5000.png","ic-linkedin.png","ic-instagram.png"];
   let done = 0, bad = [];
   files.forEach(f => {
     const img = new Image();
