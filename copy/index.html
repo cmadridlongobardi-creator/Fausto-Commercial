@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listing Copy Engine — Fausto Commercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#C61F2D;
+    --black:#000000;
+    --gray:#EFF1F5;
+    --white:#FFFFFF;
+    --ink:#16181D;
+    --muted:#6B7280;
+    --line:#DCE0E8;
+    --display:'Montserrat',system-ui,sans-serif;
+    --body:'IBM Plex Sans',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--gray);color:var(--ink);
+    font-family:var(--body);font-size:15px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 64px}
+
+  /* ---------- masthead ---------- */
+  header{
+    background:var(--black);color:var(--white);
+    margin:0 0 28px;padding:26px 20px 22px;
+    border-bottom:4px solid var(--red);
+  }
+  .head-inner{max-width:1140px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .brand{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9AA1AC;margin:0 0 6px}
+  h1{font-family:var(--display);font-weight:800;font-size:30px;line-height:1.05;letter-spacing:-.01em;margin:0;text-transform:uppercase}
+  h1 span{color:var(--red)}
+  .head-note{font-size:13px;color:#9AA1AC;max-width:360px;text-align:right}
+
+  /* ---------- layout ---------- */
+  .grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;align-items:start}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+  .card{background:var(--white);border:1px solid var(--line);padding:22px}
+  .card + .card{margin-top:20px}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:block;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .eyebrow b{color:var(--red);font-weight:500}
+
+  label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 5px}
+  input,select,textarea{
+    width:100%;font-family:var(--body);font-size:14px;color:var(--ink);
+    background:var(--white);border:1px solid var(--line);padding:9px 10px;border-radius:0;
+  }
+  textarea{min-height:190px;resize:vertical;line-height:1.6}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--red);outline-offset:-1px;border-color:var(--red)}
+  .field{margin-bottom:14px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  button{font-family:var(--display);cursor:pointer;border:none;border-radius:0}
+  .run{
+    width:100%;background:var(--red);color:var(--white);
+    font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+    padding:15px 18px;transition:background .15s;
+  }
+  .run:hover:not(:disabled){background:#a3141f}
+  .run:disabled{background:#C6C9D0;cursor:not-allowed}
+  .run:focus-visible{outline:3px solid var(--black);outline-offset:2px}
+
+  .hint{font-size:12px;color:var(--muted);margin:10px 0 0}
+
+  /* ---------- output ---------- */
+  .empty{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--black);padding:40px 28px}
+  .empty h3{font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.02em;margin:0 0 10px}
+  .empty p{color:var(--muted);margin:0 0 18px;max-width:520px}
+  .empty ol{color:var(--muted);font-size:14px;margin:0;padding-left:18px}
+  .empty li{margin-bottom:6px}
+
+  .out{background:var(--white);border:1px solid var(--line);padding:0;margin-bottom:20px}
+  .out-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);background:#FAFBFC}
+  .out-title{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);margin:0}
+  .out-body{padding:20px}
+  .out-body p{margin:0 0 12px;white-space:pre-wrap}
+  .out-body p:last-child{margin-bottom:0}
+  .mono-out{font-family:var(--mono);font-size:14px;line-height:1.6;margin:0;white-space:pre-wrap;word-break:break-word}
+
+  .count{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted)}
+  .count.over{color:var(--red);font-weight:500}
+
+  .copy{
+    background:transparent;border:1px solid var(--line);color:var(--ink);
+    font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    padding:6px 12px;transition:all .15s;
+  }
+  .copy:hover{border-color:var(--red);color:var(--red)}
+  .copy.done{background:var(--black);border-color:var(--black);color:var(--white)}
+
+  .kw{display:flex;flex-wrap:wrap;gap:8px}
+  .kw span{font-family:var(--mono);font-size:12px;background:var(--gray);border:1px solid var(--line);padding:5px 10px}
+
+  /* ---------- the ledger (signature) ---------- */
+  .ledger{background:var(--black);color:var(--white);padding:0;margin-bottom:20px}
+  .ledger .out-head{background:#0C0E12;border-bottom:1px solid #23262D}
+  .ledger .out-title{color:var(--white)}
+  .ledger-body{padding:6px 20px 18px}
+  .ledger-row{display:grid;grid-template-columns:96px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid #23262D;align-items:baseline}
+  .ledger-row:last-child{border-bottom:none}
+  .tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:4px 0;color:#9AA1AC}
+  .tag.fix{color:var(--red)}
+  .tag.flag{color:#F0B429}
+  .ledger-row p{margin:0;font-size:14px;color:#E4E7EC}
+  .stats{display:flex;gap:28px;padding:16px 20px;border-top:1px solid #23262D;flex-wrap:wrap}
+  .stat b{display:block;font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1}
+  .stat i{font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#9AA1AC}
+
+  /* ---------- states ---------- */
+  .working{background:var(--white);border:1px solid var(--line);border-left:4px solid var(--red);padding:28px}
+  .working p{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .bar{height:3px;background:var(--gray);margin-top:16px;overflow:hidden}
+  .bar i{display:block;height:100%;width:35%;background:var(--red);animation:slide 1.1s ease-in-out infinite}
+  @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(390%)}}
+  @media (prefers-reduced-motion:reduce){.bar i{animation:none;width:100%}}
+
+  .error{background:#FFF4F4;border:1px solid var(--red);border-left:4px solid var(--red);padding:20px}
+  .error h3{font-family:var(--display);font-size:14px;text-transform:uppercase;margin:0 0 6px;color:var(--red)}
+  .error p{margin:0;font-size:14px}
+
+  footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <div>
+      <p class="brand">Fausto Commercial · Marketing Operations</p>
+      <h1>Listing Copy <span>Engine</span></h1>
+    </div>
+    <p class="head-note">Paste what the agent wrote. Get listing-ready copy, SEO fields, and a record of every change.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <!-- ============ INPUT ============ -->
+    <div>
+      <div class="card">
+        <span class="eyebrow">01 — <b>Property facts</b></span>
+
+        <div class="field">
+          <label for="address">Address or property name</label>
+          <input id="address" type="text" placeholder="6240 Miramar Pkwy, Miramar, FL">
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="type">Asset type</label>
+            <select id="type">
+              <option>Land / Development</option>
+              <option>Retail</option>
+              <option>Office</option>
+              <option>Industrial</option>
+              <option>Multifamily</option>
+              <option>Restaurant / QSR</option>
+              <option>Mixed-Use</option>
+              <option>Special Purpose</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="deal">Transaction</label>
+            <select id="deal">
+              <option>For Sale</option>
+              <option>For Lease</option>
+              <option>For Sale or Lease</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="size">Size</label>
+            <input id="size" type="text" placeholder="4.1 AC / 13,300 SF">
+          </div>
+          <div class="field">
+            <label for="price">Price or rate</label>
+            <input id="price" type="text" placeholder="$4,200,000 or $28/SF NNN">
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label for="market">Submarket</label>
+          <input id="market" type="text" placeholder="Homestead · South Miami-Dade">
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow">02 — <b>What the agent wrote</b></span>
+        <div class="field" style="margin-bottom:10px">
+          <label for="raw">Raw text — paste it exactly as received</label>
+          <textarea id="raw" placeholder="great oportunity!!! 4.1 acres in homestead ready to build, all aprovals done. near the speedway and the new sports complex. gas station and 2 restaurants aproved plus retail. wont last call me"></textarea>
+        </div>
+        <button class="run" id="run">Clean and optimize</button>
+        <p class="hint">Nothing is invented. If a fact is missing, the engine flags it instead of filling the gap.</p>
+      </div>
+    </div>
+
+    <!-- ============ OUTPUT ============ -->
+    <div id="out">
+      <div class="empty">
+        <h3>Waiting on copy</h3>
+        <p>This produces the five assets a listing needs, from one paste — written in the Fausto voice: confident, direct, market-smart. No filler.</p>
+        <ol>
+          <li>Listing description for LoopNet and the site</li>
+          <li>Headline and one-line teaser for email and flyers</li>
+          <li>SEO title tag and meta description, within character limits</li>
+          <li>Search keywords for the property page</li>
+          <li>A rewrite ledger — what changed, and what the agent still owes you</li>
+        </ol>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>Brandbook voice · Montserrat / IBM Plex</span>
+    <span>Marketing Ops · Fausto Commercial 2026</span>
+  </footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const out = $('out');
+const runBtn = $('run');
+
+const esc = s => String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+runBtn.addEventListener('click', run);
+
+async function run(){
+  const raw = $('raw').value.trim();
+  if(!raw){
+    out.innerHTML = errorBox('No text to work with', 'Paste the agent copy in field 02, then run it again.');
+    $('raw').focus();
+    return;
+  }
+
+  runBtn.disabled = true;
+  runBtn.textContent = 'Working…';
+  out.innerHTML = '<div class="working"><p>Rewriting copy · building SEO fields · checking claims</p><div class="bar"><i></i></div></div>';
+
+  const facts = [
+    ['Address', $('address').value.trim()],
+    ['Asset type', $('type').value],
+    ['Transaction', $('deal').value],
+    ['Size', $('size').value.trim()],
+    ['Price / rate', $('price').value.trim()],
+    ['Submarket', $('market').value.trim()]
+  ].map(([k,v]) => k + ': ' + (v || '(not provided)')).join('\n');
+
+  const prompt = `You are the copy desk for Fausto Commercial, a commercial real estate brokerage in South Florida. An agent submitted raw listing text. Rewrite it to publication standard.
+
+BRAND VOICE: confident, direct, market-smart. High urgency, high clarity, zero filler. Institutional but not stiff. American English. Never use exclamation marks, "amazing", "must see", "won't last", or any hype adjective that carries no information.
+
+HARD RULES:
+- Never invent a fact. If a number, approval, tenant, or distance is not in the raw text or the property facts, do not state it. Flag it as missing instead.
+- Convert vague claims into specifics only when the specific is already present in the input.
+- Keep any genuine differentiator the agent identified, even if badly written.
+- Commercial listing, US market. Avoid language that implies a guaranteed return or a legal approval that was not stated.
+
+PROPERTY FACTS:
+${facts}
+
+RAW AGENT TEXT:
+"""${raw}"""
+
+Return ONLY valid JSON, no markdown fences, no preamble, matching exactly this shape:
+{
+  "headline": "listing headline, max 65 characters, no address unless it is the selling point",
+  "teaser": "one sentence, max 130 characters, usable as an email subject or flyer kicker",
+  "description": "the listing description, HARD LIMIT 610 characters including spaces and line breaks, 2-3 short paragraphs separated by \\n\\n, leading with the single strongest reason to act. Count characters and stay at or under 610 — do not exceed it.",
+  "seo_title": "SEO title tag, 50-60 characters, includes asset type and city",
+  "meta_description": "meta description, 140-155 characters, ends with a reason to click",
+  "keywords": ["6 to 9 search terms a buyer or tenant would actually type"],
+  "changes": [{"type":"fix","note":"one specific edit made, in plain language, max 90 characters"}],
+  "flags": [{"type":"flag","note":"one fact that is missing or unverifiable and must come from the agent, max 90 characters"}]
+}
+Include 3-6 items in "changes" and 0-4 items in "flags".`;
+
+  try{
+    const res = await fetch('/api/generate', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        messages:[{role:'user', content:prompt}]
+      })
+    });
+
+    if(!res.ok){
+      let msg = 'The engine returned status ' + res.status + '.';
+      try{ const e = await res.json(); if(e && e.error){ msg = typeof e.error === 'string' ? e.error : (e.error.message || msg); } }catch(_){}
+      throw new Error(msg);
+    }
+
+    const data = await res.json();
+    const text = (data.content || [])
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('\n')
+      .replace(/```json|```/g,'')
+      .trim();
+
+    let d;
+    try{
+      d = JSON.parse(text);
+    }catch(e){
+      const s = text.indexOf('{'), t = text.lastIndexOf('}');
+      if(s === -1 || t === -1) throw new Error('The response could not be read as structured copy.');
+      d = JSON.parse(text.slice(s, t + 1));
+    }
+
+    render(d, raw);
+  }catch(err){
+    out.innerHTML = errorBox('Run failed', esc(err.message) + ' Try again in a moment — your input is still here.');
+  }finally{
+    runBtn.disabled = false;
+    runBtn.textContent = 'Clean and optimize';
+  }
+}
+
+function words(s){ return (String(s).trim().match(/\S+/g) || []).length; }
+
+function block(title, id, content, meta){
+  return `<div class="out">
+    <div class="out-head">
+      <p class="out-title">${title}</p>
+      <div style="display:flex;align-items:center;gap:12px">
+        ${meta ? `<span class="${meta.cls}">${esc(meta.text)}</span>` : ''}
+        <button class="copy" data-copy="${id}">Copy</button>
+      </div>
+    </div>
+    <div class="out-body" id="${id}">${content}</div>
+  </div>`;
+}
+
+function limit(s, max){
+  const n = String(s || '').length;
+  return { cls: 'count' + (n > max ? ' over' : ''), text: n + ' / ' + max + ' char' };
+}
+
+function render(d, raw){
+  const paras = String(d.description || '')
+    .split(/\n{2,}/)
+    .map(p => `<p>${esc(p.trim())}</p>`)
+    .join('');
+
+  const kw = (d.keywords || [])
+    .map(k => `<span>${esc(k)}</span>`)
+    .join('');
+
+  const ledgerRows = []
+    .concat((d.changes || []).map(c => ({t:'fix', label:'Rewrote', note:c.note})))
+    .concat((d.flags || []).map(f => ({t:'flag', label:'Missing', note:f.note})))
+    .map(r => `<div class="ledger-row">
+        <span class="tag ${r.t}">${r.label}</span>
+        <p>${esc(r.note)}</p>
+      </div>`).join('');
+
+  const before = words(raw), after = words(d.description);
+
+  out.innerHTML =
+    block('Listing headline', 'o-head', `<p style="font-family:var(--display);font-weight:700;font-size:20px;line-height:1.25;margin:0">${esc(d.headline)}</p>`, limit(d.headline, 65)) +
+    block('Email subject / flyer kicker', 'o-teaser', `<p class="mono-out">${esc(d.teaser)}</p>`, limit(d.teaser, 130)) +
+    block('Listing description', 'o-desc', paras, limit(d.description, 610)) +
+    block('SEO title tag', 'o-title', `<p class="mono-out">${esc(d.seo_title)}</p>`, limit(d.seo_title, 60)) +
+    block('Meta description', 'o-meta', `<p class="mono-out">${esc(d.meta_description)}</p>`, limit(d.meta_description, 155)) +
+    block('Search keywords', 'o-kw', `<div class="kw">${kw}</div>`, {cls:'count', text:(d.keywords||[]).length + ' terms'}) +
+    `<div class="ledger">
+      <div class="out-head"><p class="out-title">Rewrite ledger</p><span class="count" style="color:#9AA1AC">Send the flags back to the agent</span></div>
+      <div class="ledger-body">${ledgerRows || '<div class="ledger-row"><span class="tag">Clean</span><p>No edits required.</p></div>'}</div>
+      <div class="stats">
+        <span class="stat"><b>${before}</b><i>words in</i></span>
+        <span class="stat"><b>${after}</b><i>words out</i></span>
+        <span class="stat"><b>${(d.changes||[]).length}</b><i>edits made</i></span>
+        <span class="stat"><b>${(d.flags||[]).length}</b><i>facts owed</i></span>
+      </div>
+    </div>`;
+
+  out.querySelectorAll('.copy').forEach(b => {
+    b.addEventListener('click', () => {
+      const src = $(b.dataset.copy);
+      const txt = b.dataset.copy === 'o-kw'
+        ? Array.from(src.querySelectorAll('span')).map(s => s.textContent).join(', ')
+        : src.innerText.trim();
+      navigator.clipboard.writeText(txt).then(() => {
+        b.textContent = 'Copied';
+        b.classList.add('done');
+        setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('done'); }, 1600);
+      });
+    });
+  });
+
+  out.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function errorBox(title, msg){
+  return `<div class="error"><h3>${esc(title)}</h3><p>${msg}</p></div>`;
+}
+</script>
+</body>
+</html>
