@@ -96,9 +96,35 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Model did not return structured output.' });
     }
 
+    // Saneamiento: a veces el modelo mete el siguiente campo dentro de "description"
+    // en formato de tags (</description>, <parameter name="seo_title">...). Lo limpiamos.
+    const out = { ...toolBlock.input };
+
+    if (typeof out.description === 'string') {
+      // Buscar dónde se fuga el título dentro de la descripción.
+      const leakMatch = out.description.match(/<parameter\s+name="seo_title">([\s\S]*)$/i);
+      if (leakMatch) {
+        const leakedTitle = leakMatch[1].replace(/<\/?[^>]+>/g, '').trim();
+        // Si el seo_title real vino vacío, lo rescatamos del texto fugado.
+        if (leakedTitle && (!out.seo_title || !String(out.seo_title).trim())) {
+          out.seo_title = leakedTitle;
+        }
+      }
+      // Cortar la descripción en el primer tag de cierre o <parameter que aparezca.
+      out.description = out.description
+        .split(/<\/description>|<parameter\b/i)[0]
+        .replace(/<\/?[^>]+>/g, '')
+        .trim();
+    }
+
+    // Por si el título quedó con tags residuales.
+    if (typeof out.seo_title === 'string') {
+      out.seo_title = out.seo_title.replace(/<\/?[^>]+>/g, '').trim();
+    }
+
     // Devolver en el shape que el frontend ya sabe leer: content[].text = JSON string.
     return res.status(200).json({
-      content: [{ type: 'text', text: JSON.stringify(toolBlock.input) }]
+      content: [{ type: 'text', text: JSON.stringify(out) }]
     });
 
   } catch (e) {
