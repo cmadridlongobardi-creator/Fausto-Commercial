@@ -286,18 +286,7 @@ ${facts}
 RAW AGENT TEXT:
 """${raw}"""
 
-Return ONLY valid JSON, no markdown fences, no preamble, matching exactly this shape:
-{
-  "headline": "listing headline, max 65 characters, no address unless it is the selling point",
-  "teaser": "one sentence, max 130 characters, usable as an email subject or flyer kicker",
-  "description": "the listing description, HARD LIMIT 610 characters including spaces and line breaks, 2-3 short paragraphs separated by \\n\\n, leading with the single strongest reason to act. Count characters and stay at or under 610 — do not exceed it.",
-  "seo_title": "SEO title tag, 50-60 characters, includes asset type and city",
-  "meta_description": "meta description, 140-155 characters, ends with a reason to click",
-  "keywords": ["6 to 9 search terms a buyer or tenant would actually type"],
-  "changes": [{"type":"fix","note":"one specific edit made, in plain language, max 90 characters"}],
-  "flags": [{"type":"flag","note":"one fact that is missing or unverifiable and must come from the agent, max 90 characters"}]
-}
-Include 3-6 items in "changes" and 0-4 items in "flags".`;
+Use the emit_listing tool to return the finished package. Fill every field. Never invent a fact — if a number, approval, tenant, or distance is not in the input, leave it out of the copy and record it in the flags instead. Keep the description at or under 610 characters. Do not write field names, tags, or JSON syntax inside any field — write only the finished copy for each field.`;
 
   try{
     const res = await fetch('/api/generate', {
