@@ -1,9 +1,9 @@
-name,title,email,direct,mobile,license,_ref_web
+name,title,email,direct,mobile,license,_ref_web,address
 Adam Hauptman,Commercial Real Estate Advisor,adamh@faustocommercial.com,,305.522.5771,,
 Adir Bez,Commercial Real Estate Advisor,adirb@faustocommercial.com,,786.483.0826,,
 Amin Soudani,Commercial Real Estate Advisor,amin@faustocommercial.com,,786.564.0126,,
 Anne Mairura,Commercial Real Estate Advisor,anne@faustocommercial.com,,347.424.7908,,
-Aria Fleming,Commercial Real Estate Advisor,af@faustocommercial.com,,808.699.1416,,Jacksonville Office
+Aria Fleming,Commercial Real Estate Advisor,af@faustocommercial.com,,808.699.1416,,,"25 N Market St, Ste 225, Jacksonville, FL 32202"
 Ariel Levi,Commercial Real Estate Advisor,alevi@faustocommercial.com,,718.737.6482,,NORTH MULTI-FAMILY
 Armando Mercado,Commercial Real Estate Advisor,axm@faustocommercial.com,,786.600.1556,,
 Armando Sanchez Bueno,Commercial Real Estate Advisor,asb@faustocommercial.com,,954.398.4522,,
@@ -51,4 +51,4 @@ Veronica Rueda,Commercial Real Estate Advisor,vcr@faustocommercial.com,,305.316.
 Vicente Rodriguez,"VP, Multi-Family",vr@faustocommercial.com,,305.510.6627,,VP MULTI-FAMILY
 Yuniel De Varona,Commercial Real Estate Advisor,yv@faustocommercial.com,,786.222.1373,,OPA-LOCKA INDUSTRIAL
 Zenovia Varela P.A.,Commercial Real Estate Advisor,zv@faustocommercial.com,,954.348.5852,,Dania beach industrial
-Rush Chandlee,Commercial Real Estate Advisor,rrc@faustocommercial.com,,904.763.8888,,
+Rush Chandlee,Commercial Real Estate Advisor,rrc@faustocommercial.com,,904.763.8888,,,"25 N Market St, Ste 225, Jacksonville, FL 32202"
