@@ -326,6 +326,8 @@ const CONFIG = {
   // Fundacion Elena A. Miranda
   foundation: "https://go.faustocommercial.com/miranda-home",
 
+  // Direccion por defecto. Se sobrescribe por persona con la columna
+  // "address" del roster.csv (ej: Jacksonville).
   // ####  VERIFICAR  ####  Nombre licenciado ante DBPR.
   // Regla FREC 61J2-10.025: debe ir pegado al bloque de contacto.
   brokerage : "Fausto Commercial Realty Consultants, Inc.",
@@ -338,7 +340,10 @@ const CONFIG = {
    este archivo nunca mas.
 
    Columnas exactas (primera fila del CSV):
-   name,title,email,direct,mobile,license
+   name,title,email,direct,mobile,license,_ref_web,address
+
+   "address" es OPCIONAL: si va vacia se usa CONFIG.address (Miami).
+   Solo se llena para quienes trabajan desde otra oficina.
 
    Campos vacios no rompen nada: la linea se omite y la pagina
    avisa a la persona para que reporte el dato faltante.
@@ -415,7 +420,7 @@ function buildSignature(p){
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#C61F2D;letter-spacing:1px;line-height:15px;padding-top:3px;">${(p.title||"").toUpperCase()}</div>
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#000000;line-height:16px;padding-top:9px;">${CONFIG.brokerage}</div>
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#333333;line-height:19px;padding-top:5px;">
-${contact}${CONFIG.address}
+${contact}${p.address || CONFIG.address}
 </div>
 <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;padding-top:8px;">
 ${A(CONFIG.webUrl,"faustocommercial.com")}
