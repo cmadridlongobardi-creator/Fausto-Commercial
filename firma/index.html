@@ -386,68 +386,35 @@ function parseCSV(text){
 }
 
 /* ============================================================
-   SIGNATURE TEMPLATE
-   Rules that must not be broken:
-   - tables only, no div layout (Outlook renders with the Word engine)
-   - every style inline
-   - every <a> gets an explicit color, or Outlook paints it blue
-   - images referenced by absolute URL = zero attachments
-   - alt text on every image, because clients block images by default
+   SIGNATURE TEMPLATE — loaded from signature-template.html (same
+   folder). That file is the single source of truth: this page AND
+   the agent-onboarding email both render from it. To change the
+   design, edit signature-template.html only. Never touch this code.
+
+   Placeholders the template expects:
+   {{name}} {{title}} {{email}} {{mobile}} {{mobile_tel}} {{address}}
    ============================================================ */
+let TEMPLATE = "";
+
+const esc = s => String(s || "")
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+// Numeros que ya vienen con codigo de pais (+58...) se respetan tal cual.
+// Los demas se asumen US y se les antepone +1.
+const tel = v => (v || "").trim().startsWith("+")
+  ? v.replace(/[^\d+]/g, "")
+  : "+1" + (v || "").replace(/\D/g, "");
+
 function buildSignature(p){
-  const A = (href, text) =>
-    `<a href="${href}" style="color:#000000;text-decoration:none;">${text}</a>`;
-
-  const line = (label, value, href) => value
-    ? `<span style="color:#9AA0A8;">${label}</span>&nbsp;${href ? A(href, value) : value}<br>`
-    : "";
-
-  // Numeros que ya vienen con codigo de pais (+58...) se respetan tal cual.
-  // Los demas se asumen US y se les antepone +1.
-  const tel = v => v.trim().startsWith("+")
-    ? "tel:" + v.replace(/[^\d+]/g, "")
-    : "tel:+1" + v.replace(/\D/g, "");
-
-  const contact =
-      line("D", p.direct, p.direct ? tel(p.direct) : null)
-    + line("M", p.mobile, p.mobile ? tel(p.mobile) : null)
-    + line("E", p.email,  p.email  ? "mailto:"+p.email : null);
-
-  const license = p.license
-    ? `<div style="font-size:11px;color:#9AA0A8;padding-top:6px;">FL License #${p.license}</div>` : "";
-
-  return `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
-<tr>
-<td align="center" valign="top" width="164" style="width:164px;padding:0 16px 0 0;text-align:center;">
-<img src="${CONFIG.assetBase}fausto-logo.png" width="132" height="57" alt="Fausto Commercial" style="border:0;outline:none;">
-<br>
-<img src="${CONFIG.assetBase}inc5000.png" width="64" height="64" alt="Inc. 5000 - America's Fastest-Growing Private Companies" style="border:0;outline:none;margin-top:12px;">
-</td>
-<td valign="top" style="border-left:2px solid #C61F2D;padding:2px 0 0 16px;">
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:#000000;line-height:20px;">${p.name}</div>
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#C61F2D;letter-spacing:1px;line-height:15px;padding-top:3px;">${(p.title||"").toUpperCase()}</div>
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#000000;line-height:16px;padding-top:9px;">${CONFIG.brokerage}</div>
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#333333;line-height:19px;padding-top:5px;">
-${contact}${p.address || CONFIG.address}
-</div>
-<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;padding-top:8px;">
-${A(CONFIG.webUrl,"faustocommercial.com")}
-</div>
-<div style="padding-top:9px;line-height:0;">
-<a href="${CONFIG.linkedin}" style="text-decoration:none;"><img src="${CONFIG.assetBase}ic-linkedin.png" width="24" height="24" alt="LinkedIn" style="border:0;outline:none;"></a>&nbsp;&nbsp;<a href="${CONFIG.instagram}" style="text-decoration:none;"><img src="${CONFIG.assetBase}ic-instagram.png" width="24" height="24" alt="Instagram" style="border:0;outline:none;"></a>
-</div>
-${license}
-</td>
-</tr>
-<tr>
-<td colspan="2" style="padding:14px 0 0 0;">
-<div style="border-top:1px solid #D4D8DE;padding-top:10px;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#6B7280;line-height:15px;">
-<span style="font-weight:bold;color:#333333;">Proud supporter of the Elena A. Miranda Foundation</span>, a 509(a)(1) public charity.<br>
-<span style="font-style:italic;">"Dedicated to saving the lives of children."</span> <a href="${CONFIG.foundation}" style="color:#6B7280;text-decoration:underline;">Click to learn more, participate, or donate.</a>
-</div>
-</td>
-</tr>
-</table>`;
+  const vars = {
+    name       : esc(p.name),
+    title      : esc((p.title || "").toUpperCase()),
+    email      : esc(p.email),
+    mobile     : esc(p.mobile || p.direct),
+    mobile_tel : tel(p.mobile || p.direct),
+    address    : esc(p.address || CONFIG.address)
+  };
+  return TEMPLATE.replace(/\{\{(\w+)\}\}/g, (m, k) => k in vars ? vars[k] : m);
 }
 
 /* ============================================================
@@ -460,8 +427,15 @@ let current = null;
 
 (async function loadRoster(){
   try{
-    const res = await fetch("/firma/roster.csv?cb=" + Date.now());
-    if(!res.ok) throw new Error("HTTP " + res.status);
+    const cb = "?cb=" + Date.now();
+    const [resT, res] = await Promise.all([
+      fetch("/firma/signature-template.html" + cb),
+      fetch("/firma/roster.csv" + cb)
+    ]);
+    if(!resT.ok) throw new Error("signature-template.html HTTP " + resT.status);
+    TEMPLATE = (await resT.text()).replace(/<!--[\s\S]*?-->\s*/g, "").trim();
+    if(!TEMPLATE.includes("{{name}}")) throw new Error("signature-template.html has no placeholders");
+    if(!res.ok) throw new Error("roster.csv HTTP " + res.status);
     ROSTER = parseCSV(await res.text());
     if(!ROSTER.length) throw new Error("roster.csv is empty");
     ROSTER.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
@@ -472,9 +446,9 @@ let current = null;
   }catch(err){
     sel.disabled = true;
     sel.innerHTML = '<option>Directory unavailable</option>';
-    document.getElementById("alarmTitle").textContent = "The staff directory isn't loading.";
+    document.getElementById("alarmTitle").textContent = "The signature page isn't loading.";
     document.getElementById("alarmDetail").innerHTML =
-      ` Couldn't load <code>roster.csv</code> — ${err.message}.`;
+      ` Couldn't load a required file — ${err.message}.`;
     document.getElementById("alarm").classList.add("show");
   }
 })();

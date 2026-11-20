@@ -1,0 +1,55 @@
+<!--
+  Fausto Commercial - email signature template
+  Source of truth for /firma (the page) and for the agent-onboarding email.
+  Live URL: https://tours.faustocommercial.com/firma/signature-template.html
+
+  Placeholders (replace all, no HTML escaping needed beyond &, <, >):
+    {{name}}        Full name as it must appear (FREC: as licensed)   e.g. Alexander Villanueva
+    {{title}}       Already in UPPERCASE                                e.g. COMMERCIAL REAL ESTATE ADVISOR
+    {{email}}       e.g. av@faustocommercial.com
+    {{mobile}}      Display format with dots                            e.g. 786.397.4641  |  +58 412.547.8152
+    {{mobile_tel}}  tel: value, digits only with country code           e.g. +17863974641  |  +584125478152
+    {{address}}     Resolved office address, never empty:
+                    Miami        -> 1761 W Flagler St, Miami, FL 33135
+                    Jacksonville -> 25 N Market St, Ste 225, Jacksonville, FL 32202
+
+  Rendering rules (do not break):
+    - tables only, every style inline (Outlook renders with the Word engine)
+    - every <a> has an explicit color or Outlook paints it blue
+    - images by absolute URL only = zero attachments
+    - alt text on every image
+    - inc5000.png is 128x128, shown at 88x88; fausto-logo.png shown at 132x57
+-->
+<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;">
+<tr>
+<td align="center" valign="top" width="164" style="width:164px;padding:0 16px 0 0;text-align:center;">
+<img src="https://tours.faustocommercial.com/firma/assets/fausto-logo.png" width="132" height="57" alt="Fausto Commercial" style="border:0;outline:none;">
+<br>
+<img src="https://tours.faustocommercial.com/firma/assets/inc5000.png" width="88" height="88" alt="Inc. 5000 - America's Fastest-Growing Private Companies" style="border:0;outline:none;margin-top:12px;">
+</td>
+<td valign="top" style="border-left:2px solid #C61F2D;padding:2px 0 0 16px;">
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:bold;color:#000000;line-height:20px;">{{name}}</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#C61F2D;letter-spacing:1px;line-height:15px;padding-top:3px;">{{title}}</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;color:#000000;line-height:16px;padding-top:9px;">Fausto Commercial Realty Consultants, Inc.</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#333333;line-height:19px;padding-top:5px;">
+<span style="color:#9AA0A8;">M</span>&nbsp;<a href="tel:{{mobile_tel}}" style="color:#000000;text-decoration:none;">{{mobile}}</a><br>
+<span style="color:#9AA0A8;">E</span>&nbsp;<a href="mailto:{{email}}" style="color:#000000;text-decoration:none;">{{email}}</a><br>
+{{address}}
+</div>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;padding-top:8px;">
+<a href="https://go.faustocommercial.com/FCRCE" style="color:#000000;text-decoration:none;">faustocommercial.com</a>
+</div>
+<div style="padding-top:9px;line-height:0;">
+<a href="https://go.faustocommercial.com/fc-linkedin" style="text-decoration:none;"><img src="https://tours.faustocommercial.com/firma/assets/ic-linkedin.png" width="24" height="24" alt="LinkedIn" style="border:0;outline:none;"></a>&nbsp;&nbsp;<a href="https://go.faustocommercial.com/Ig" style="text-decoration:none;"><img src="https://tours.faustocommercial.com/firma/assets/ic-instagram.png" width="24" height="24" alt="Instagram" style="border:0;outline:none;"></a>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="padding:14px 0 0 0;">
+<div style="border-top:1px solid #D4D8DE;padding-top:10px;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#6B7280;line-height:15px;">
+<span style="font-weight:bold;color:#333333;">Proud supporter of the Elena A. Miranda Foundation</span>, a 509(a)(1) public charity.<br>
+<span style="font-style:italic;">"Dedicated to saving the lives of children."</span> <a href="https://go.faustocommercial.com/miranda-home" style="color:#6B7280;text-decoration:underline;">Click to learn more, participate, or donate.</a>
+</div>
+</td>
+</tr>
+</table>
